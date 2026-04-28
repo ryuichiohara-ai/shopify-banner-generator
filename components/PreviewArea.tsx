@@ -16,27 +16,30 @@ type Props = {
   update: (key: keyof BannerData, value: unknown) => void;
 };
 
-const PC_PREVIEW_SCALE = 0.4; // 1080 → 432 px
-const MOBILE_PREVIEW_SCALE = 0.4; // 1280 → 512 px / 320 → 128 px
+const PC_PREVIEW_SCALE = 0.4;
+const MOBILE_PREVIEW_SCALE = 0.4;
 
 /**
  * プレビュー表示用とキャプチャ用でバナーを 2 つ描画する。
- *
- * - 表示用：CSS transform: scale() で縮小して画面に表示
- * - キャプチャ用：実寸（無変形）で画面外（left: -100000px）に固定配置 → html2canvas はこちらを撮る
- *
- * 表示用と同じ要素を transform 付きで html2canvas に渡すと、
- * 要素の getBoundingClientRect が transform 後のサイズになり、
- * キャプチャ結果がキャンバスの左上に小さく描画されて崩れる。
- * これを回避するために 2 描画に分離している。
+ * 表示用：CSS transform: scale() で縮小
+ * キャプチャ用：実寸で画面外に固定 → html2canvas はこちらを撮る
  */
 export default function PreviewArea({ data, template, pcRef, mobileRef, update }: Props) {
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragTarget, setDragTarget] = useState<DragTarget>("main");
+  // UI 表示用 state（ボタンのハイライト）
+  const [dragTargetUI, setDragTargetUI] = useState<DragTarget>("main");
+
+  // ドラッグ処理用 ref（クロージャの古い値問題を防ぐ）
+  const dragTargetRef = useRef<DragTarget>("main");
+  const isDraggingRef = useRef(false);
+
   const pcPreviewRef = useRef<HTMLDivElement>(null);
   const mobilePreviewRef = useRef<HTMLDivElement>(null);
 
-  /** ドラッグ中の座標をBannerDataに反映する */
+  function selectTarget(t: DragTarget) {
+    setDragTargetUI(t);
+    dragTargetRef.current = t;
+  }
+
   function applyDrag(
     e: React.MouseEvent<HTMLDivElement>,
     containerRef: React.RefObject<HTMLDivElement | null>,
@@ -51,10 +54,11 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
     const pctX = Math.round(Math.max(0, Math.min(90, (rawX / canvasW) * 100)) * 10) / 10;
     const pctY = Math.round(Math.max(2, Math.min(95, (rawY / canvasH) * 100)) * 10) / 10;
 
-    if (dragTarget === "main") {
+    const t = dragTargetRef.current;
+    if (t === "main") {
       update("customMainX", pctX);
       update("customMainY", pctY);
-    } else if (dragTarget === "sub") {
+    } else if (t === "sub") {
       update("customSubX", pctX);
       update("customSubY", pctY);
     } else {
@@ -65,30 +69,58 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
 
   const isCustom = template === "custom";
 
-  // ドラッグターゲット選択ボタンのラベル
   const dragTargetButtons: { id: DragTarget; label: string }[] = [
     { id: "main", label: "メインコピー" },
     { id: "sub", label: "サブコピー" },
     { id: "cta", label: "CTA" },
   ];
 
+  function makePCHandlers() {
+    return {
+      onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isCustom) return;
+        e.preventDefault();
+        isDraggingRef.current = true;
+        applyDrag(e, pcPreviewRef, PC_PREVIEW_SCALE, PC_SIZE.width, PC_SIZE.height);
+      },
+      onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDraggingRef.current || !isCustom) return;
+        applyDrag(e, pcPreviewRef, PC_PREVIEW_SCALE, PC_SIZE.width, PC_SIZE.height);
+      },
+      onMouseUp: () => { isDraggingRef.current = false; },
+      onMouseLeave: () => { isDraggingRef.current = false; },
+    };
+  }
+
+  function makeMobileHandlers() {
+    return {
+      onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isCustom) return;
+        e.preventDefault();
+        isDraggingRef.current = true;
+        applyDrag(e, mobilePreviewRef, MOBILE_PREVIEW_SCALE, MOBILE_SIZE.width, MOBILE_SIZE.height);
+      },
+      onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDraggingRef.current || !isCustom) return;
+        applyDrag(e, mobilePreviewRef, MOBILE_PREVIEW_SCALE, MOBILE_SIZE.width, MOBILE_SIZE.height);
+      },
+      onMouseUp: () => { isDraggingRef.current = false; },
+      onMouseLeave: () => { isDraggingRef.current = false; },
+    };
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      {/* キャプチャ用：実寸 / 画面外 / refs はこっち */}
+      {/* キャプチャ用：実寸 / 画面外 */}
       <div
         aria-hidden="true"
-        style={{
-          position: "fixed",
-          left: "-100000px",
-          top: 0,
-          pointerEvents: "none",
-        }}
+        style={{ position: "fixed", left: "-100000px", top: 0, pointerEvents: "none" }}
       >
         <PCBanner ref={pcRef} data={data} template={template} />
         <MobileBanner ref={mobileRef} data={data} template={template} />
       </div>
 
-      {/* カスタムテンプレート：ドラッグ対象選択ボタン */}
+      {/* カスタムテンプレート：移動対象選択 */}
       {isCustom && (
         <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2.5">
           <span className="text-xs font-medium text-neutral-500 shrink-0">移動する要素：</span>
@@ -97,9 +129,9 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
               <button
                 key={id}
                 type="button"
-                onClick={() => setDragTarget(id)}
+                onClick={() => selectTarget(id)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  dragTarget === id
+                  dragTargetUI === id
                     ? "bg-neutral-800 text-white"
                     : "bg-white text-neutral-600 border border-neutral-300 hover:bg-neutral-100"
                 }`}
@@ -112,7 +144,7 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
         </div>
       )}
 
-      {/* 表示用：縮小プレビュー（refs は不要） */}
+      {/* PC プレビュー */}
       <section className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
         <header className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold text-neutral-700">PC 用プレビュー</h2>
@@ -125,24 +157,14 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
           height={PC_SIZE.height}
           scale={PC_PREVIEW_SCALE}
           containerRef={pcPreviewRef}
-          onMouseDown={(e) => {
-            if (!isCustom) return;
-            e.preventDefault();
-            setIsDragging(true);
-            applyDrag(e, pcPreviewRef, PC_PREVIEW_SCALE, PC_SIZE.width, PC_SIZE.height);
-          }}
-          onMouseMove={(e) => {
-            if (!isDragging || !isCustom) return;
-            applyDrag(e, pcPreviewRef, PC_PREVIEW_SCALE, PC_SIZE.width, PC_SIZE.height);
-          }}
-          onMouseUp={() => setIsDragging(false)}
-          onMouseLeave={() => setIsDragging(false)}
-          cursor={isCustom ? (isDragging ? "grabbing" : "crosshair") : "default"}
+          cursor={isCustom ? "crosshair" : "default"}
+          {...makePCHandlers()}
         >
           <PCBanner data={data} template={template} />
         </ScaledFrame>
       </section>
 
+      {/* スマホ プレビュー */}
       <section className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
         <header className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold text-neutral-700">スマホ用プレビュー</h2>
@@ -156,19 +178,8 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
           height={MOBILE_SIZE.height}
           scale={MOBILE_PREVIEW_SCALE}
           containerRef={mobilePreviewRef}
-          onMouseDown={(e) => {
-            if (!isCustom) return;
-            e.preventDefault();
-            setIsDragging(true);
-            applyDrag(e, mobilePreviewRef, MOBILE_PREVIEW_SCALE, MOBILE_SIZE.width, MOBILE_SIZE.height);
-          }}
-          onMouseMove={(e) => {
-            if (!isDragging || !isCustom) return;
-            applyDrag(e, mobilePreviewRef, MOBILE_PREVIEW_SCALE, MOBILE_SIZE.width, MOBILE_SIZE.height);
-          }}
-          onMouseUp={() => setIsDragging(false)}
-          onMouseLeave={() => setIsDragging(false)}
-          cursor={isCustom ? (isDragging ? "grabbing" : "crosshair") : "default"}
+          cursor={isCustom ? "crosshair" : "default"}
+          {...makeMobileHandlers()}
         >
           <MobileBanner data={data} template={template} />
         </ScaledFrame>
@@ -177,11 +188,6 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
   );
 }
 
-/**
- * 子要素を実寸サイズで描画したまま、CSS transform でスケール表示するためのラッパ。
- * 表示用途のみ。html2canvas のキャプチャ対象には絶対に使わない（transform で
- * bounding rect が縮むため）。
- */
 function ScaledFrame({
   width,
   height,
