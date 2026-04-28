@@ -21,6 +21,7 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
   const [bgRemoving, setBgRemoving] = useState(false);
   const [bgInfo, setBgInfo] = useState<string | null>(null);
   const [bgFileName, setBgFileName] = useState<string | null>(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   function update<K extends keyof BannerData>(key: K, value: BannerData[K]) {
@@ -58,16 +59,26 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
     }
     setBgRemoving(true);
     try {
+      // 透過前のURLを保持しておく（元に戻す用）
+      setOriginalImageUrl(data.imageUrl);
       const transparentUrl = await removeImageBackground(data.imageUrl);
       update("imageUrl", transparentUrl);
       setBgInfo("背景を透過しました ✨");
     } catch (e) {
+      setOriginalImageUrl(null);
       setBgInfo(
         "背景透過に失敗しました：" + (e instanceof Error ? e.message : "不明なエラー"),
       );
     } finally {
       setBgRemoving(false);
     }
+  }
+
+  function handleRevertBackground() {
+    if (!originalImageUrl) return;
+    update("imageUrl", originalImageUrl);
+    setOriginalImageUrl(null);
+    setBgInfo("元の画像に戻しました");
   }
 
   function handleBgFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
@@ -285,6 +296,16 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
               >
                 {bgRemoving ? "処理中..." : "✂︎ 背景透過"}
               </button>
+              {originalImageUrl && (
+                <button
+                  type="button"
+                  onClick={handleRevertBackground}
+                  className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+                  title="背景透過前の画像に戻します"
+                >
+                  元に戻す
+                </button>
+              )}
             </div>
             <p className="mt-1 text-xs text-neutral-500">
               空のままだとプレースホルダーが表示されます。背景透過は商品画像をワンクリックで切り抜き
@@ -363,33 +384,87 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
           </Field>
 
           <Field label="メインコピー">
-            <input
-              type="text"
-              value={data.mainCopy}
-              onChange={(e) => update("mainCopy", e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
-              placeholder="今だけの特別ギフト"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={data.mainCopy}
+                onChange={(e) => update("mainCopy", e.target.value)}
+                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                placeholder="今だけの特別ギフト"
+              />
+              <input
+                type="color"
+                value={data.mainCopyColor || "#ffffff"}
+                onChange={(e) => update("mainCopyColor", e.target.value)}
+                className="h-9 w-9 cursor-pointer rounded border border-neutral-300 p-0.5 shrink-0"
+                title="テキスト色"
+              />
+              {data.mainCopyColor && (
+                <button
+                  type="button"
+                  onClick={() => update("mainCopyColor", "")}
+                  className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0 whitespace-nowrap"
+                >
+                  リセット
+                </button>
+              )}
+            </div>
           </Field>
 
           <Field label="サブコピー">
-            <input
-              type="text"
-              value={data.subCopy}
-              onChange={(e) => update("subCopy", e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
-              placeholder="大切な人へ、季節の花を贈りませんか？"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={data.subCopy}
+                onChange={(e) => update("subCopy", e.target.value)}
+                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                placeholder="大切な人へ、季節の花を贈りませんか？"
+              />
+              <input
+                type="color"
+                value={data.subCopyColor || "#ffffff"}
+                onChange={(e) => update("subCopyColor", e.target.value)}
+                className="h-9 w-9 cursor-pointer rounded border border-neutral-300 p-0.5 shrink-0"
+                title="テキスト色"
+              />
+              {data.subCopyColor && (
+                <button
+                  type="button"
+                  onClick={() => update("subCopyColor", "")}
+                  className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0 whitespace-nowrap"
+                >
+                  リセット
+                </button>
+              )}
+            </div>
           </Field>
 
           <Field label="CTA 文言">
-            <input
-              type="text"
-              value={data.cta}
-              onChange={(e) => update("cta", e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
-              placeholder="詳しく見る"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={data.cta}
+                onChange={(e) => update("cta", e.target.value)}
+                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                placeholder="詳しく見る"
+              />
+              <input
+                type="color"
+                value={data.ctaColor || "#ffffff"}
+                onChange={(e) => update("ctaColor", e.target.value)}
+                className="h-9 w-9 cursor-pointer rounded border border-neutral-300 p-0.5 shrink-0"
+                title="CTA テキスト色"
+              />
+              {data.ctaColor && (
+                <button
+                  type="button"
+                  onClick={() => update("ctaColor", "")}
+                  className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0 whitespace-nowrap"
+                >
+                  リセット
+                </button>
+              )}
+            </div>
           </Field>
 
           <Field label="CTA サイズ">
@@ -414,6 +489,45 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
               })}
             </div>
           </Field>
+
+          {/* LINE テンプレート専用：テキスト色カスタマイズ */}
+          {template === "line" && (
+            <>
+              <Field label="テキスト色">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={data.lineTextColor ?? "#ffffff"}
+                    onChange={(e) => update("lineTextColor", e.target.value)}
+                    className="h-9 w-16 cursor-pointer rounded border border-neutral-300 p-0.5"
+                  />
+                  <span className="text-xs text-neutral-500">メインコピー・サブコピーの色</span>
+                </div>
+              </Field>
+              <Field label="アクセント色（価格）">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={data.lineAccentColor ?? "#fff59d"}
+                    onChange={(e) => update("lineAccentColor", e.target.value)}
+                    className="h-9 w-16 cursor-pointer rounded border border-neutral-300 p-0.5"
+                  />
+                  <span className="text-xs text-neutral-500">価格テキストの色</span>
+                </div>
+              </Field>
+              <Field label="アイコン色">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={data.lineIconColor ?? "#06C755"}
+                    onChange={(e) => update("lineIconColor", e.target.value)}
+                    className="h-9 w-16 cursor-pointer rounded border border-neutral-300 p-0.5"
+                  />
+                  <span className="text-xs text-neutral-500">吹き出し内の人物アイコン色</span>
+                </div>
+              </Field>
+            </>
+          )}
         </div>
       </section>
     </div>

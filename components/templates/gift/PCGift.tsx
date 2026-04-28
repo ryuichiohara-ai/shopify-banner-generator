@@ -96,7 +96,7 @@ export default function PCGift({ data }: Props) {
           ✦ GIFT ✦
         </div>
         {data.subCopy && (
-          <span style={{ fontSize: 26, letterSpacing: "0.08em", color: "#57534e" }}>
+          <span style={{ fontSize: 26, letterSpacing: "0.08em", color: data.subCopyColor || "#57534e" }}>
             {data.subCopy}
           </span>
         )}
@@ -110,6 +110,7 @@ export default function PCGift({ data }: Props) {
               lineHeight: 1.15,
               letterSpacing: "0.06em",
               fontFamily: BANNER_SERIF_FAMILY,
+              color: data.mainCopyColor || "#3f2d23",
             }}
           >
             {data.mainCopy}
@@ -184,7 +185,7 @@ export default function PCGift({ data }: Props) {
         <div
           style={{
             backgroundColor: "#ffffff",
-            color: "#9f1239",
+            color: data.ctaColor || "#9f1239",
             border: "2px solid #9f1239",
             fontSize: ctaStyle.fontSize,
             fontWeight: 600,

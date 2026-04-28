@@ -72,6 +72,7 @@ export default function MobileMember({ data }: Props) {
               fontWeight: 900,
               lineHeight: 1.1,
               textShadow: "0 4px 12px rgba(0,0,0,0.3)",
+              color: data.mainCopyColor || "#ffffff",
             }}
           >
             {data.mainCopy}
@@ -96,7 +97,7 @@ export default function MobileMember({ data }: Props) {
         <div
           style={{
             backgroundColor: "#fbbf24",
-            color: "#1e3a8a",
+            color: data.ctaColor || "#1e3a8a",
             fontSize: ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.12em",

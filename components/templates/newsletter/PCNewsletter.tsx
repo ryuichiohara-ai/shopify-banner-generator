@@ -72,7 +72,7 @@ export default function PCNewsletter({ data }: Props) {
             style={{
               fontSize: 26,
               letterSpacing: "0.08em",
-              color: hasBg ? "#ffffff" : "#0369a1",
+              color: data.subCopyColor || (hasBg ? "#ffffff" : "#0369a1"),
             }}
           >
             {data.subCopy}
@@ -88,6 +88,7 @@ export default function PCNewsletter({ data }: Props) {
               lineHeight: 1.2,
               letterSpacing: "0.04em",
               textShadow: hasBg ? "0 4px 12px rgba(0,0,0,0.4)" : "none",
+              color: data.mainCopyColor || (hasBg ? "#ffffff" : "#0c4a6e"),
             }}
           >
             {data.mainCopy}
@@ -145,7 +146,7 @@ export default function PCNewsletter({ data }: Props) {
         <div
           style={{
             backgroundColor: "#0ea5e9",
-            color: "#ffffff",
+            color: data.ctaColor || "#ffffff",
             fontSize: ctaStyle.fontSize,
             fontWeight: 700,
             letterSpacing: "0.16em",

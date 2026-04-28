@@ -139,7 +139,7 @@ export default function PCCustom({ data }: Props) {
                   fontSize: 72,
                   fontWeight: 800,
                   lineHeight: 1.1,
-                  color: textColor,
+                  color: data.mainCopyColor || textColor,
                   fontFamily: fontPreset.titleFamily,
                   letterSpacing: "-0.01em",
                 }}
@@ -152,7 +152,7 @@ export default function PCCustom({ data }: Props) {
                 style={{
                   fontSize: 32,
                   lineHeight: 1.5,
-                  color: isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.65)",
+                  color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.65)"),
                   fontFamily: fontPreset.bodyFamily,
                 }}
               >
@@ -164,7 +164,7 @@ export default function PCCustom({ data }: Props) {
                 marginTop: 12,
                 alignSelf: alignItems,
                 backgroundColor: textColor,
-                color: ctaBgColor,
+                color: data.ctaColor || ctaBgColor,
                 fontSize: ctaStyle.fontSize,
                 fontWeight: 700,
                 letterSpacing: "0.08em",
@@ -234,7 +234,7 @@ export default function PCCustom({ data }: Props) {
                 fontSize: 88,
                 fontWeight: 800,
                 lineHeight: 1.1,
-                color: textColor,
+                color: data.mainCopyColor || textColor,
                 fontFamily: fontPreset.titleFamily,
                 letterSpacing: "-0.02em",
               }}
@@ -247,7 +247,7 @@ export default function PCCustom({ data }: Props) {
               style={{
                 fontSize: 36,
                 lineHeight: 1.5,
-                color: isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)",
+                color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)"),
                 fontFamily: fontPreset.bodyFamily,
               }}
             >
@@ -259,7 +259,7 @@ export default function PCCustom({ data }: Props) {
               marginTop: 16,
               alignSelf: alignItems,
               backgroundColor: textColor,
-              color: ctaBgColor,
+              color: data.ctaColor || ctaBgColor,
               fontSize: ctaStyle.fontSize,
               fontWeight: 700,
               letterSpacing: "0.08em",
