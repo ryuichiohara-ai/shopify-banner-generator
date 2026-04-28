@@ -57,7 +57,7 @@ export default function PCLine({ data }: Props) {
           ★ 公式アカウント ★
         </div>
         {data.subCopy && (
-          <span style={{ fontSize: 26, letterSpacing: "0.08em", opacity: 0.95, color: data.subCopyColor || textColor }}>
+          <span style={{ fontSize: 26 * (data.subCopySizeScale ?? 1.0), letterSpacing: "0.08em", opacity: 0.95, color: data.subCopyColor || textColor }}>
             {data.subCopy}
           </span>
         )}
@@ -65,7 +65,7 @@ export default function PCLine({ data }: Props) {
           <h1
             style={{
               margin: 0,
-              fontSize: 76,
+              fontSize: 76 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 900,
               textAlign: "center",
               lineHeight: 1.15,
@@ -90,7 +90,36 @@ export default function PCLine({ data }: Props) {
           gap: 24,
         }}
       >
-        <HandshakeBubble iconColor={iconColor} />
+        {/* 左：ブランドロゴ or HandshakeBubble */}
+        {data.lineBrandLogoUrl ? (
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              width: 320,
+              height: 320,
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(255,255,255,0.15)",
+              borderRadius: "50%",
+              border: "4px solid rgba(255,255,255,0.3)",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={data.lineBrandLogoUrl}
+              alt="ブランドロゴ"
+              crossOrigin="anonymous"
+              style={{ width: 220, height: 220, objectFit: "contain", borderRadius: 16 }}
+            />
+          </div>
+        ) : (
+          <div style={{ position: "relative", zIndex: 10, flexShrink: 0 }}>
+            <HandshakeBubble iconColor={iconColor} />
+          </div>
+        )}
         {data.price && (
           <div
             style={{
@@ -124,7 +153,7 @@ export default function PCLine({ data }: Props) {
           style={{
             backgroundColor: "#ffffff",
             color: data.ctaColor || "#06C755",
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 900,
             letterSpacing: "0.16em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

@@ -96,7 +96,7 @@ export default function MobileGift({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 52,
+              fontSize: 52 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 700,
               lineHeight: 1.1,
               letterSpacing: "0.04em",
@@ -109,7 +109,7 @@ export default function MobileGift({ data }: Props) {
         )}
         <div
           style={{
-            fontSize: 22,
+            fontSize: 22 * (data.subCopySizeScale ?? 1.0),
             color: "#57534e",
             fontFamily: BANNER_SERIF_FAMILY,
           }}
@@ -159,7 +159,7 @@ export default function MobileGift({ data }: Props) {
             backgroundColor: "#ffffff",
             color: data.ctaColor || "#9f1239",
             border: "2px solid #9f1239",
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 600,
             letterSpacing: "0.16em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

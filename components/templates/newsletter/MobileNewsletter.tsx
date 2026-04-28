@@ -68,7 +68,7 @@ export default function MobileNewsletter({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 44,
+              fontSize: 44 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 900,
               lineHeight: 1.1,
               textShadow: hasBg ? "0 4px 12px rgba(0,0,0,0.4)" : "none",
@@ -98,7 +98,7 @@ export default function MobileNewsletter({ data }: Props) {
           style={{
             backgroundColor: "#0ea5e9",
             color: data.ctaColor || "#ffffff",
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 700,
             letterSpacing: "0.12em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

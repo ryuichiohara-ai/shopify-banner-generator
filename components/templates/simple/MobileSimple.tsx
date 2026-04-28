@@ -66,11 +66,11 @@ export default function MobileSimple({ data }: Props) {
         }}
       >
         {data.mainCopy && (
-          <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1.15, color: data.mainCopyColor || (hasBg ? "#ffffff" : "#171717") }}>{data.mainCopy}</div>
+          <div style={{ fontSize: 52 * (data.mainCopySizeScale ?? 1.0), fontWeight: 700, lineHeight: 1.15, color: data.mainCopyColor || (hasBg ? "#ffffff" : "#171717") }}>{data.mainCopy}</div>
         )}
         <div
           style={{
-            fontSize: 26,
+            fontSize: 26 * (data.subCopySizeScale ?? 1.0),
             color: hasBg ? "#e5e5e5" : "#404040",
           }}
         >
@@ -93,7 +93,7 @@ export default function MobileSimple({ data }: Props) {
           style={{
             backgroundColor: hasBg ? "#ffffff" : "#171717",
             color: data.ctaColor || (hasBg ? "#171717" : "#ffffff"),
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 600,
             letterSpacing: "0.08em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

@@ -68,7 +68,7 @@ export default function MobileMember({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 52,
+              fontSize: 52 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 900,
               lineHeight: 1.1,
               textShadow: "0 4px 12px rgba(0,0,0,0.3)",
@@ -79,7 +79,7 @@ export default function MobileMember({ data }: Props) {
           </div>
         )}
         {data.price && (
-          <div style={{ fontSize: 28, fontWeight: 900, color: "#fbbf24" }}>{data.price}</div>
+          <div style={{ fontSize: 28 * (data.subCopySizeScale ?? 1.0), fontWeight: 900, color: "#fbbf24" }}>{data.price}</div>
         )}
       </div>
 
@@ -98,7 +98,7 @@ export default function MobileMember({ data }: Props) {
           style={{
             backgroundColor: "#fbbf24",
             color: data.ctaColor || "#1e3a8a",
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 900,
             letterSpacing: "0.12em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

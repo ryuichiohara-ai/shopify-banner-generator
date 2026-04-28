@@ -23,6 +23,8 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
   const [bgFileName, setBgFileName] = useState<string | null>(null);
   const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [storeUrl, setStoreUrl] = useState("");
+  const [isFetchingLogo, setIsFetchingLogo] = useState(false);
 
   function update<K extends keyof BannerData>(key: K, value: BannerData[K]) {
     onChange({ ...data, [key]: value });
@@ -109,6 +111,19 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
     }
     setBgFileName(null);
     update("backgroundImageUrl", "");
+  }
+
+  async function handleFetchLogo() {
+    if (!storeUrl) return;
+    setIsFetchingLogo(true);
+    try {
+      const res = await fetch(`/api/store-logo?url=${encodeURIComponent(storeUrl)}`);
+      const { logoUrl, error } = await res.json();
+      if (logoUrl) update("lineBrandLogoUrl", logoUrl);
+      else alert("ロゴを取得できませんでした: " + error);
+    } finally {
+      setIsFetchingLogo(false);
+    }
   }
 
   return (
@@ -409,6 +424,22 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
                 </button>
               )}
             </div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-neutral-400 w-16 shrink-0">文字サイズ</span>
+              <input
+                type="range" min={0.5} max={2.0} step={0.05}
+                value={data.mainCopySizeScale ?? 1.0}
+                onChange={(e) => update("mainCopySizeScale", parseFloat(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-xs text-neutral-500 w-10 text-right shrink-0">
+                {Math.round((data.mainCopySizeScale ?? 1.0) * 100)}%
+              </span>
+              {(data.mainCopySizeScale ?? 1.0) !== 1.0 && (
+                <button type="button" onClick={() => update("mainCopySizeScale", 1.0)}
+                  className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0">リセット</button>
+              )}
+            </div>
           </Field>
 
           <Field label="サブコピー">
@@ -437,6 +468,22 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
                 </button>
               )}
             </div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-neutral-400 w-16 shrink-0">文字サイズ</span>
+              <input
+                type="range" min={0.5} max={2.0} step={0.05}
+                value={data.subCopySizeScale ?? 1.0}
+                onChange={(e) => update("subCopySizeScale", parseFloat(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-xs text-neutral-500 w-10 text-right shrink-0">
+                {Math.round((data.subCopySizeScale ?? 1.0) * 100)}%
+              </span>
+              {(data.subCopySizeScale ?? 1.0) !== 1.0 && (
+                <button type="button" onClick={() => update("subCopySizeScale", 1.0)}
+                  className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0">リセット</button>
+              )}
+            </div>
           </Field>
 
           <Field label="CTA 文言">
@@ -463,6 +510,22 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
                 >
                   リセット
                 </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-neutral-400 w-16 shrink-0">文字サイズ</span>
+              <input
+                type="range" min={0.5} max={2.0} step={0.05}
+                value={data.ctaSizeScale ?? 1.0}
+                onChange={(e) => update("ctaSizeScale", parseFloat(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-xs text-neutral-500 w-10 text-right shrink-0">
+                {Math.round((data.ctaSizeScale ?? 1.0) * 100)}%
+              </span>
+              {(data.ctaSizeScale ?? 1.0) !== 1.0 && (
+                <button type="button" onClick={() => update("ctaSizeScale", 1.0)}
+                  className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0">リセット</button>
               )}
             </div>
           </Field>
@@ -526,6 +589,36 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
                   <span className="text-xs text-neutral-500">吹き出し内の人物アイコン色</span>
                 </div>
               </Field>
+              {/* LINE ブランドロゴ */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-neutral-700">ブランドロゴ（URL入力またはShopifyサイトから自動取得）</label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://your-store.myshopify.com/..."
+                    value={storeUrl}
+                    onChange={(e) => setStoreUrl(e.target.value)}
+                    className="flex-1 rounded border border-neutral-300 px-3 py-2 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleFetchLogo}
+                    disabled={isFetchingLogo}
+                    className="rounded bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600 disabled:opacity-50 shrink-0"
+                  >
+                    {isFetchingLogo ? "取得中..." : "ロゴ取得"}
+                  </button>
+                </div>
+                {data.lineBrandLogoUrl && (
+                  <div className="flex items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={data.lineBrandLogoUrl} alt="ロゴ" className="h-10 w-10 rounded object-contain border border-neutral-200" />
+                    <span className="text-xs text-neutral-500 flex-1 truncate">{data.lineBrandLogoUrl}</span>
+                    <button type="button" onClick={() => update("lineBrandLogoUrl", "")}
+                      className="text-xs text-neutral-400 hover:text-red-500 shrink-0">削除</button>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

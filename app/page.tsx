@@ -13,6 +13,10 @@ export default function Home() {
   const pcRef = useRef<HTMLDivElement | null>(null);
   const mobileRef = useRef<HTMLDivElement | null>(null);
 
+  function update(key: keyof BannerData, value: unknown) {
+    setData((prev) => ({ ...prev, [key]: value }));
+  }
+
   function handleTemplateChange(next: TemplateId) {
     setTemplate(next);
     // テンプレート切り替え時：テキスト系フィールドをプリセットで上書き
@@ -56,6 +60,7 @@ export default function Home() {
               template={template}
               pcRef={pcRef}
               mobileRef={mobileRef}
+              update={update}
             />
             <DownloadArea pcRef={pcRef} mobileRef={mobileRef} template={template} />
           </div>

@@ -29,16 +29,42 @@ export default function MobileLine({ data }: Props) {
     >
       <BackgroundLayer url={data.backgroundImageUrl} />
 
-      {/* 左：握手アイコン（小） */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 2,
-          flexShrink: 0,
-        }}
-      >
-        <HandshakeBubbleMini iconColor={iconColor} />
-      </div>
+      {/* 左：ブランドロゴ or HandshakeBubbleMini */}
+      {data.lineBrandLogoUrl ? (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            width: 200,
+            height: 200,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.15)",
+            borderRadius: "50%",
+            border: "4px solid rgba(255,255,255,0.3)",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={data.lineBrandLogoUrl}
+            alt="ブランドロゴ"
+            crossOrigin="anonymous"
+            style={{ width: 130, height: 130, objectFit: "contain", borderRadius: 16 }}
+          />
+        </div>
+      ) : (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            flexShrink: 0,
+          }}
+        >
+          <HandshakeBubbleMini iconColor={iconColor} />
+        </div>
+      )}
 
       {/* 中央：バッジ + メインコピー */}
       <div
@@ -69,7 +95,7 @@ export default function MobileLine({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 52,
+              fontSize: 52 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 900,
               lineHeight: 1.1,
               textShadow: "0 4px 12px rgba(0,0,0,0.25)",
@@ -99,7 +125,7 @@ export default function MobileLine({ data }: Props) {
           style={{
             backgroundColor: "#ffffff",
             color: data.ctaColor || "#06C755",
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 900,
             letterSpacing: "0.12em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

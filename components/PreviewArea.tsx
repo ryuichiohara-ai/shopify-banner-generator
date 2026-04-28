@@ -1,6 +1,6 @@
 "use client";
 
-import { type RefObject } from "react";
+import { type RefObject, useRef, useState } from "react";
 import type { BannerData, TemplateId } from "@/lib/types";
 import { MOBILE_SIZE, PC_SIZE } from "@/lib/types";
 import PCBanner from "./PCBanner";
@@ -11,6 +11,7 @@ type Props = {
   template: TemplateId;
   pcRef: RefObject<HTMLDivElement | null>;
   mobileRef: RefObject<HTMLDivElement | null>;
+  update: (key: keyof BannerData, value: unknown) => void;
 };
 
 const PC_PREVIEW_SCALE = 0.4; // 1080 → 432 px
@@ -27,7 +28,11 @@ const MOBILE_PREVIEW_SCALE = 0.4; // 1280 → 512 px / 320 → 128 px
  * キャプチャ結果がキャンバスの左上に小さく描画されて崩れる。
  * これを回避するために 2 描画に分離している。
  */
-export default function PreviewArea({ data, template, pcRef, mobileRef }: Props) {
+export default function PreviewArea({ data, template, pcRef, mobileRef, update }: Props) {
+  const [isDragging, setIsDragging] = useState(false);
+  const pcPreviewRef = useRef<HTMLDivElement>(null);
+  const mobilePreviewRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className="flex flex-col gap-6">
       {/* キャプチャ用：実寸 / 画面外 / refs はこっち */}
@@ -52,7 +57,36 @@ export default function PreviewArea({ data, template, pcRef, mobileRef }: Props)
             実寸 {PC_SIZE.width}×{PC_SIZE.height} px / 表示は {Math.round(PC_PREVIEW_SCALE * 100)}%
           </span>
         </header>
-        <ScaledFrame width={PC_SIZE.width} height={PC_SIZE.height} scale={PC_PREVIEW_SCALE}>
+        {template === "custom" && (
+          <p className="mb-2 text-xs text-neutral-400">プレビュー上でテキストブロックをドラッグして位置を変更できます</p>
+        )}
+        <ScaledFrame
+          width={PC_SIZE.width}
+          height={PC_SIZE.height}
+          scale={PC_PREVIEW_SCALE}
+          containerRef={pcPreviewRef}
+          onMouseDown={(e) => {
+            if (template !== "custom") return;
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onMouseMove={(e) => {
+            if (!isDragging || template !== "custom") return;
+            const rect = pcPreviewRef.current!.getBoundingClientRect();
+            const PC_SCALE = 0.4;
+            const PC_CANVAS_W = 1080;
+            const PC_CANVAS_H = 1080;
+            const rawX = (e.clientX - rect.left) / PC_SCALE;
+            const rawY = (e.clientY - rect.top) / PC_SCALE;
+            const pctX = Math.max(0, Math.min(85, (rawX / PC_CANVAS_W) * 100));
+            const pctY = Math.max(5, Math.min(90, (rawY / PC_CANVAS_H) * 100));
+            update("customTextX", Math.round(pctX * 10) / 10);
+            update("customTextY", Math.round(pctY * 10) / 10);
+          }}
+          onMouseUp={() => setIsDragging(false)}
+          onMouseLeave={() => setIsDragging(false)}
+          cursor={template === "custom" ? (isDragging ? "grabbing" : "grab") : "default"}
+        >
           <PCBanner data={data} template={template} />
         </ScaledFrame>
       </section>
@@ -65,10 +99,35 @@ export default function PreviewArea({ data, template, pcRef, mobileRef }: Props)
             {Math.round(MOBILE_PREVIEW_SCALE * 100)}%
           </span>
         </header>
+        {template === "custom" && (
+          <p className="mb-2 text-xs text-neutral-400">プレビュー上でテキストブロックをドラッグして位置を変更できます</p>
+        )}
         <ScaledFrame
           width={MOBILE_SIZE.width}
           height={MOBILE_SIZE.height}
           scale={MOBILE_PREVIEW_SCALE}
+          containerRef={mobilePreviewRef}
+          onMouseDown={(e) => {
+            if (template !== "custom") return;
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onMouseMove={(e) => {
+            if (!isDragging || template !== "custom") return;
+            const rect = mobilePreviewRef.current!.getBoundingClientRect();
+            const MOBILE_SCALE = 0.4;
+            const MOBILE_CANVAS_W = 1280;
+            const MOBILE_CANVAS_H = 320;
+            const rawX = (e.clientX - rect.left) / MOBILE_SCALE;
+            const rawY = (e.clientY - rect.top) / MOBILE_SCALE;
+            const pctX = Math.max(0, Math.min(85, (rawX / MOBILE_CANVAS_W) * 100));
+            const pctY = Math.max(5, Math.min(90, (rawY / MOBILE_CANVAS_H) * 100));
+            update("customTextX", Math.round(pctX * 10) / 10);
+            update("customTextY", Math.round(pctY * 10) / 10);
+          }}
+          onMouseUp={() => setIsDragging(false)}
+          onMouseLeave={() => setIsDragging(false)}
+          cursor={template === "custom" ? (isDragging ? "grabbing" : "grab") : "default"}
         >
           <MobileBanner data={data} template={template} />
         </ScaledFrame>
@@ -87,11 +146,23 @@ function ScaledFrame({
   height,
   scale,
   children,
+  containerRef,
+  onMouseDown,
+  onMouseMove,
+  onMouseUp,
+  onMouseLeave,
+  cursor,
 }: {
   width: number;
   height: number;
   scale: number;
   children: React.ReactNode;
+  containerRef?: React.RefObject<HTMLDivElement | null>;
+  onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseMove?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseUp?: () => void;
+  onMouseLeave?: () => void;
+  cursor?: string;
 }) {
   return (
     <div
@@ -99,12 +170,18 @@ function ScaledFrame({
       style={{ width: "100%" }}
     >
       <div
+        ref={containerRef}
         style={{
           width: width * scale,
           height: height * scale,
           position: "relative",
           margin: "0 auto",
+          cursor: cursor ?? "default",
         }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseLeave}
       >
         <div
           style={{
@@ -115,6 +192,7 @@ function ScaledFrame({
             position: "absolute",
             top: 0,
             left: 0,
+            pointerEvents: "none",
           }}
         >
           {children}

@@ -99,7 +99,7 @@ export default function MobileSale({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 56,
+              fontSize: 56 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 900,
               lineHeight: 1.1,
               textShadow: "0 4px 6px rgba(0,0,0,0.3)",
@@ -109,7 +109,7 @@ export default function MobileSale({ data }: Props) {
             {data.mainCopy}
           </div>
         )}
-        <div style={{ fontSize: 22, opacity: 0.9 }}>{productName}</div>
+        <div style={{ fontSize: 22 * (data.subCopySizeScale ?? 1.0), opacity: 0.9 }}>{productName}</div>
       </div>
 
       {/* 右：CTA */}
@@ -127,7 +127,7 @@ export default function MobileSale({ data }: Props) {
           style={{
             backgroundColor: "#fde047",
             color: data.ctaColor || "#b91c1c",
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 900,
             letterSpacing: "0.12em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

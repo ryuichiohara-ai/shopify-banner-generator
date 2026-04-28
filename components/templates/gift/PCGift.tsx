@@ -104,7 +104,7 @@ export default function PCGift({ data }: Props) {
           <h1
             style={{
               margin: "8px 0 0 0",
-              fontSize: 68,
+              fontSize: 68 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 700,
               textAlign: "center",
               lineHeight: 1.15,
@@ -172,7 +172,7 @@ export default function PCGift({ data }: Props) {
       >
         <div
           style={{
-            fontSize: 32,
+            fontSize: 32 * (data.subCopySizeScale ?? 1.0),
             fontWeight: 500,
             fontFamily: BANNER_SERIF_FAMILY,
           }}
@@ -187,7 +187,7 @@ export default function PCGift({ data }: Props) {
             backgroundColor: "#ffffff",
             color: data.ctaColor || "#9f1239",
             border: "2px solid #9f1239",
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 600,
             letterSpacing: "0.16em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

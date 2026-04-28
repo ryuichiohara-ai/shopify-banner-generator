@@ -48,6 +48,10 @@ export default function PCCustom({ data }: Props) {
     borderRadius: 9999,
   } as const;
 
+  // テキストブロックの絶対位置
+  const textX = data.customTextX ?? 4;
+  const textY = data.customTextY ?? 50;
+
   return (
     <div
       style={{
@@ -94,182 +98,106 @@ export default function PCCustom({ data }: Props) {
         </>
       )}
 
-      {/* メインコンテンツ */}
-      {showImg ? (
-        /* 画像あり：左テキスト + 右画像 */
+      {/* テキストブロック（絶対配置でドラッグ可能） */}
+      <div
+        style={{
+          position: "absolute",
+          left: `${textX}%`,
+          top: `${textY}%`,
+          transform: "translateY(-50%)",
+          zIndex: 10,
+          display: "flex",
+          flexDirection: "column",
+          alignItems,
+          textAlign,
+          gap: 12,
+          maxWidth: "70%",
+        }}
+      >
+        {data.price && <div style={badgeStyle}>{data.price}</div>}
+        {data.productName && (
+          <div
+            style={{
+              fontSize: 24,
+              fontWeight: 600,
+              letterSpacing: "0.2em",
+              color: isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)",
+              textTransform: "uppercase" as const,
+              fontFamily: fontPreset.bodyFamily,
+            }}
+          >
+            {data.productName}
+          </div>
+        )}
+        {data.mainCopy && (
+          <div
+            style={{
+              fontSize: 72 * (data.mainCopySizeScale ?? 1.0),
+              fontWeight: 800,
+              lineHeight: 1.1,
+              color: data.mainCopyColor || textColor,
+              fontFamily: fontPreset.titleFamily,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {data.mainCopy}
+          </div>
+        )}
+        {data.subCopy && (
+          <div
+            style={{
+              fontSize: 32 * (data.subCopySizeScale ?? 1.0),
+              lineHeight: 1.5,
+              color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.65)"),
+              fontFamily: fontPreset.bodyFamily,
+            }}
+          >
+            {data.subCopy}
+          </div>
+        )}
         <div
           style={{
-            position: "relative",
-            zIndex: 10,
-            display: "flex",
-            alignItems: "center",
-            gap: 60,
-            width: "100%",
+            marginTop: 12,
+            alignSelf: alignItems,
+            backgroundColor: textColor,
+            color: data.ctaColor || ctaBgColor,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,
+            borderRadius: 9999,
+            boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
           }}
         >
-          {/* テキスト */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems,
-              textAlign,
-              gap: 20,
-            }}
-          >
-            {data.price && <div style={badgeStyle}>{data.price}</div>}
-            {data.productName && (
-              <div
-                style={{
-                  fontSize: 24,
-                  fontWeight: 600,
-                  letterSpacing: "0.2em",
-                  color: isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)",
-                  textTransform: "uppercase" as const,
-                  fontFamily: fontPreset.bodyFamily,
-                }}
-              >
-                {data.productName}
-              </div>
-            )}
-            {data.mainCopy && (
-              <div
-                style={{
-                  fontSize: 72,
-                  fontWeight: 800,
-                  lineHeight: 1.1,
-                  color: data.mainCopyColor || textColor,
-                  fontFamily: fontPreset.titleFamily,
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                {data.mainCopy}
-              </div>
-            )}
-            {data.subCopy && (
-              <div
-                style={{
-                  fontSize: 32,
-                  lineHeight: 1.5,
-                  color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.65)"),
-                  fontFamily: fontPreset.bodyFamily,
-                }}
-              >
-                {data.subCopy}
-              </div>
-            )}
-            <div
-              style={{
-                marginTop: 12,
-                alignSelf: alignItems,
-                backgroundColor: textColor,
-                color: data.ctaColor || ctaBgColor,
-                fontSize: ctaStyle.fontSize,
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,
-                borderRadius: 9999,
-                boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-              }}
-            >
-              {cta}
-            </div>
-          </div>
-
-          {/* 商品画像 */}
-          <div
-            style={{
-              width: 380,
-              height: 380,
-              flexShrink: 0,
-              borderRadius: 24,
-              overflow: "hidden",
-              boxShadow: "0 24px 48px rgba(0,0,0,0.2)",
-              border: isDark ? "3px solid rgba(255,255,255,0.15)" : "3px solid rgba(0,0,0,0.08)",
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={data.imageUrl}
-              alt={data.productName || ""}
-              crossOrigin="anonymous"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </div>
+          {cta}
         </div>
-      ) : (
-        /* 画像なし：テキスト中心レイアウト */
+      </div>
+
+      {/* 商品画像（あれば右端に固定） */}
+      {showImg && (
         <div
           style={{
-            position: "relative",
-            zIndex: 10,
-            display: "flex",
-            flexDirection: "column",
-            alignItems,
-            textAlign,
-            gap: 24,
-            maxWidth: 900,
-            width: "100%",
+            position: "absolute",
+            right: 80,
+            top: "50%",
+            transform: "translateY(-50%)",
+            zIndex: 5,
+            width: 380,
+            height: 380,
+            flexShrink: 0,
+            borderRadius: 24,
+            overflow: "hidden",
+            boxShadow: "0 24px 48px rgba(0,0,0,0.2)",
+            border: isDark ? "3px solid rgba(255,255,255,0.15)" : "3px solid rgba(0,0,0,0.08)",
           }}
         >
-          {data.price && <div style={badgeStyle}>{data.price}</div>}
-          {data.productName && (
-            <div
-              style={{
-                fontSize: 24,
-                fontWeight: 600,
-                letterSpacing: "0.25em",
-                color: isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.45)",
-                textTransform: "uppercase" as const,
-                fontFamily: fontPreset.bodyFamily,
-              }}
-            >
-              {data.productName}
-            </div>
-          )}
-          {data.mainCopy && (
-            <div
-              style={{
-                fontSize: 88,
-                fontWeight: 800,
-                lineHeight: 1.1,
-                color: data.mainCopyColor || textColor,
-                fontFamily: fontPreset.titleFamily,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {data.mainCopy}
-            </div>
-          )}
-          {data.subCopy && (
-            <div
-              style={{
-                fontSize: 36,
-                lineHeight: 1.5,
-                color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)"),
-                fontFamily: fontPreset.bodyFamily,
-              }}
-            >
-              {data.subCopy}
-            </div>
-          )}
-          <div
-            style={{
-              marginTop: 16,
-              alignSelf: alignItems,
-              backgroundColor: textColor,
-              color: data.ctaColor || ctaBgColor,
-              fontSize: ctaStyle.fontSize,
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,
-              borderRadius: 9999,
-              boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-            }}
-          >
-            {cta}
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={data.imageUrl}
+            alt={data.productName || ""}
+            crossOrigin="anonymous"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
         </div>
       )}
     </div>

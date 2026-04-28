@@ -33,6 +33,10 @@ export default function MobileCustom({ data }: Props) {
       : bgPreset.background
     : "#ffffff";
 
+  // テキストブロックの絶対位置
+  const textX = data.customTextX ?? 4;
+  const textY = data.customTextY ?? 50;
+
   return (
     <div
       style={{
@@ -79,12 +83,15 @@ export default function MobileCustom({ data }: Props) {
         </>
       )}
 
-      {/* 商品画像（あれば左端） */}
+      {/* 商品画像（あれば左端に固定） */}
       {showImg && (
         <div
           style={{
-            position: "relative",
-            zIndex: 10,
+            position: "absolute",
+            left: 56,
+            top: "50%",
+            transform: "translateY(-50%)",
+            zIndex: 5,
             width: 220,
             height: 220,
             flexShrink: 0,
@@ -104,17 +111,20 @@ export default function MobileCustom({ data }: Props) {
         </div>
       )}
 
-      {/* テキスト */}
+      {/* テキストブロック（絶対配置でドラッグ可能） */}
       <div
         style={{
-          position: "relative",
+          position: "absolute",
+          left: `${textX}%`,
+          top: `${textY}%`,
+          transform: "translateY(-50%)",
           zIndex: 10,
-          flex: 1,
           display: "flex",
           flexDirection: "column",
           alignItems,
           textAlign,
-          gap: 10,
+          gap: 8,
+          maxWidth: "60%",
         }}
       >
         {data.productName && (
@@ -134,7 +144,7 @@ export default function MobileCustom({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 50,
+              fontSize: 50 * (data.mainCopySizeScale ?? 1.0),
               fontWeight: 800,
               lineHeight: 1.1,
               color: data.mainCopyColor || textColor,
@@ -148,7 +158,7 @@ export default function MobileCustom({ data }: Props) {
         {data.subCopy && (
           <div
             style={{
-              fontSize: 22,
+              fontSize: 22 * (data.subCopySizeScale ?? 1.0),
               lineHeight: 1.4,
               color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)"),
               fontFamily: fontPreset.bodyFamily,
@@ -176,22 +186,24 @@ export default function MobileCustom({ data }: Props) {
         )}
       </div>
 
-      {/* 右：CTAボタン */}
+      {/* 右：CTAボタン（右端に固定） */}
       <div
         style={{
-          position: "relative",
+          position: "absolute",
+          right: 56,
+          top: "50%",
+          transform: "translateY(-50%)",
           zIndex: 10,
           flexShrink: 0,
           display: "flex",
           alignItems: "center",
-          height: "100%",
         }}
       >
         <div
           style={{
             backgroundColor: textColor,
             color: data.ctaColor || ctaBgColor,
-            fontSize: ctaStyle.fontSize,
+            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
             fontWeight: 700,
             letterSpacing: "0.08em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,
