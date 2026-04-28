@@ -57,7 +57,7 @@ export default function PCLine({ data }: Props) {
           ★ 公式アカウント ★
         </div>
         {data.subCopy && (
-          <span style={{ fontSize: 26 * (data.subCopySizeScale ?? 1.0), letterSpacing: "0.08em", opacity: 0.95, color: data.subCopyColor || textColor }}>
+          <span style={{ fontSize: data.subCopyFontSize || 26, letterSpacing: "0.08em", opacity: 0.95, color: data.subCopyColor || textColor }}>
             {data.subCopy}
           </span>
         )}
@@ -65,7 +65,7 @@ export default function PCLine({ data }: Props) {
           <h1
             style={{
               margin: 0,
-              fontSize: 76 * (data.mainCopySizeScale ?? 1.0),
+              fontSize: data.mainCopyFontSize || 76,
               fontWeight: 900,
               textAlign: "center",
               lineHeight: 1.15,
@@ -153,7 +153,7 @@ export default function PCLine({ data }: Props) {
           style={{
             backgroundColor: "#ffffff",
             color: data.ctaColor || "#06C755",
-            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontSize: data.ctaFontSize || ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.16em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

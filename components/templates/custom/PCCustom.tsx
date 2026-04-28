@@ -132,7 +132,7 @@ export default function PCCustom({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 72 * (data.mainCopySizeScale ?? 1.0),
+              fontSize: data.mainCopyFontSize || 72,
               fontWeight: 800,
               lineHeight: 1.1,
               color: data.mainCopyColor || textColor,
@@ -146,7 +146,7 @@ export default function PCCustom({ data }: Props) {
         {data.subCopy && (
           <div
             style={{
-              fontSize: 32 * (data.subCopySizeScale ?? 1.0),
+              fontSize: data.subCopyFontSize || 32,
               lineHeight: 1.5,
               color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.65)"),
               fontFamily: fontPreset.bodyFamily,
@@ -161,7 +161,7 @@ export default function PCCustom({ data }: Props) {
             alignSelf: alignItems,
             backgroundColor: textColor,
             color: data.ctaColor || ctaBgColor,
-            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontSize: data.ctaFontSize || ctaStyle.fontSize,
             fontWeight: 700,
             letterSpacing: "0.08em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

@@ -104,7 +104,7 @@ export default function PCMember({ data }: Props) {
           <h1
             style={{
               margin: 0,
-              fontSize: 76 * (data.mainCopySizeScale ?? 1.0),
+              fontSize: data.mainCopyFontSize || 76,
               fontWeight: 900,
               textAlign: "center",
               lineHeight: 1.15,
@@ -133,7 +133,7 @@ export default function PCMember({ data }: Props) {
         {data.price && (
           <div
             style={{
-              fontSize: 64 * (data.subCopySizeScale ?? 1.0),
+              fontSize: data.subCopyFontSize || 64,
               fontWeight: 900,
               color: "#fbbf24",
               textShadow: "0 4px 12px rgba(0,0,0,0.3)",
@@ -163,7 +163,7 @@ export default function PCMember({ data }: Props) {
           style={{
             backgroundColor: "#fbbf24",
             color: data.ctaColor || "#1e3a8a",
-            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontSize: data.ctaFontSize || ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.16em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

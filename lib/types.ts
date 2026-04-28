@@ -34,12 +34,12 @@ export type BannerData = {
   subCopyColor: string;
   /** CTA文言のテキスト色（空文字=テンプレートデフォルト色を使用） */
   ctaColor: string;
-  /** メインコピーのフォントサイズ倍率（1.0 = 100%）*/
-  mainCopySizeScale: number;
-  /** サブコピーのフォントサイズ倍率（1.0 = 100%）*/
-  subCopySizeScale: number;
-  /** CTA文言のフォントサイズ倍率（1.0 = 100%）*/
-  ctaSizeScale: number;
+  /** メインコピーのフォントサイズ（px）。0 = テンプレートデフォルト */
+  mainCopyFontSize: number;
+  /** サブコピーのフォントサイズ（px）。0 = テンプレートデフォルト */
+  subCopyFontSize: number;
+  /** CTA文言のフォントサイズ（px）。0 = テンプレートデフォルト */
+  ctaFontSize: number;
   /** カスタムテンプレートのテキストブロック X 位置（%単位）*/
   customTextX: number;
   /** カスタムテンプレートのテキストブロック Y 位置（%単位）*/
@@ -67,9 +67,9 @@ export const INITIAL_DATA: BannerData = {
   mainCopyColor: "",
   subCopyColor: "",
   ctaColor: "",
-  mainCopySizeScale: 1.0,
-  subCopySizeScale: 1.0,
-  ctaSizeScale: 1.0,
+  mainCopyFontSize: 0,
+  subCopyFontSize: 0,
+  ctaFontSize: 0,
   customTextX: 4,
   customTextY: 50,
   lineBrandLogoUrl: "",

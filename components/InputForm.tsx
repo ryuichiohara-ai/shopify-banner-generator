@@ -427,16 +427,18 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-neutral-400 w-16 shrink-0">文字サイズ</span>
               <input
-                type="range" min={0.5} max={2.0} step={0.05}
-                value={data.mainCopySizeScale ?? 1.0}
-                onChange={(e) => update("mainCopySizeScale", parseFloat(e.target.value))}
-                className="flex-1"
+                type="number"
+                min={10}
+                max={300}
+                step={1}
+                value={data.mainCopyFontSize || ""}
+                onChange={(e) => update("mainCopyFontSize", e.target.value ? Number(e.target.value) : 0)}
+                placeholder="自動"
+                className="w-20 rounded-md border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-neutral-500"
               />
-              <span className="text-xs text-neutral-500 w-10 text-right shrink-0">
-                {Math.round((data.mainCopySizeScale ?? 1.0) * 100)}%
-              </span>
-              {(data.mainCopySizeScale ?? 1.0) !== 1.0 && (
-                <button type="button" onClick={() => update("mainCopySizeScale", 1.0)}
+              <span className="text-xs text-neutral-400 shrink-0">px</span>
+              {data.mainCopyFontSize > 0 && (
+                <button type="button" onClick={() => update("mainCopyFontSize", 0)}
                   className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0">リセット</button>
               )}
             </div>
@@ -471,16 +473,18 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-neutral-400 w-16 shrink-0">文字サイズ</span>
               <input
-                type="range" min={0.5} max={2.0} step={0.05}
-                value={data.subCopySizeScale ?? 1.0}
-                onChange={(e) => update("subCopySizeScale", parseFloat(e.target.value))}
-                className="flex-1"
+                type="number"
+                min={10}
+                max={300}
+                step={1}
+                value={data.subCopyFontSize || ""}
+                onChange={(e) => update("subCopyFontSize", e.target.value ? Number(e.target.value) : 0)}
+                placeholder="自動"
+                className="w-20 rounded-md border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-neutral-500"
               />
-              <span className="text-xs text-neutral-500 w-10 text-right shrink-0">
-                {Math.round((data.subCopySizeScale ?? 1.0) * 100)}%
-              </span>
-              {(data.subCopySizeScale ?? 1.0) !== 1.0 && (
-                <button type="button" onClick={() => update("subCopySizeScale", 1.0)}
+              <span className="text-xs text-neutral-400 shrink-0">px</span>
+              {data.subCopyFontSize > 0 && (
+                <button type="button" onClick={() => update("subCopyFontSize", 0)}
                   className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0">リセット</button>
               )}
             </div>
@@ -515,16 +519,18 @@ export default function InputForm({ data, onChange, template, onTemplateChange }
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-neutral-400 w-16 shrink-0">文字サイズ</span>
               <input
-                type="range" min={0.5} max={2.0} step={0.05}
-                value={data.ctaSizeScale ?? 1.0}
-                onChange={(e) => update("ctaSizeScale", parseFloat(e.target.value))}
-                className="flex-1"
+                type="number"
+                min={10}
+                max={300}
+                step={1}
+                value={data.ctaFontSize || ""}
+                onChange={(e) => update("ctaFontSize", e.target.value ? Number(e.target.value) : 0)}
+                placeholder="自動"
+                className="w-20 rounded-md border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-neutral-500"
               />
-              <span className="text-xs text-neutral-500 w-10 text-right shrink-0">
-                {Math.round((data.ctaSizeScale ?? 1.0) * 100)}%
-              </span>
-              {(data.ctaSizeScale ?? 1.0) !== 1.0 && (
-                <button type="button" onClick={() => update("ctaSizeScale", 1.0)}
+              <span className="text-xs text-neutral-400 shrink-0">px</span>
+              {data.ctaFontSize > 0 && (
+                <button type="button" onClick={() => update("ctaFontSize", 0)}
                   className="text-xs text-neutral-400 hover:text-neutral-700 shrink-0">リセット</button>
               )}
             </div>

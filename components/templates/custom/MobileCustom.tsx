@@ -144,7 +144,7 @@ export default function MobileCustom({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 50 * (data.mainCopySizeScale ?? 1.0),
+              fontSize: data.mainCopyFontSize || 50,
               fontWeight: 800,
               lineHeight: 1.1,
               color: data.mainCopyColor || textColor,
@@ -158,7 +158,7 @@ export default function MobileCustom({ data }: Props) {
         {data.subCopy && (
           <div
             style={{
-              fontSize: 22 * (data.subCopySizeScale ?? 1.0),
+              fontSize: data.subCopyFontSize || 22,
               lineHeight: 1.4,
               color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)"),
               fontFamily: fontPreset.bodyFamily,
@@ -203,7 +203,7 @@ export default function MobileCustom({ data }: Props) {
           style={{
             backgroundColor: textColor,
             color: data.ctaColor || ctaBgColor,
-            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontSize: data.ctaFontSize || ctaStyle.fontSize,
             fontWeight: 700,
             letterSpacing: "0.08em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

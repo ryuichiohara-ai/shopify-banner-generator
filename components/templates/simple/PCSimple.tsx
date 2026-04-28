@@ -46,7 +46,7 @@ export default function PCSimple({ data }: Props) {
         {data.subCopy && (
           <span
             style={{
-              fontSize: 26 * (data.subCopySizeScale ?? 1.0),
+              fontSize: data.subCopyFontSize || 26,
               letterSpacing: "0.08em",
               color: data.subCopyColor || (hasBg ? "#f5f5f5" : "#737373"),
             }}
@@ -57,7 +57,7 @@ export default function PCSimple({ data }: Props) {
         {data.mainCopy && (
           <h1
             style={{
-              fontSize: 76 * (data.mainCopySizeScale ?? 1.0),
+              fontSize: data.mainCopyFontSize || 76,
               fontWeight: 700,
               textAlign: "center",
               lineHeight: 1.15,
@@ -109,13 +109,13 @@ export default function PCSimple({ data }: Props) {
           width: "100%",
         }}
       >
-        <div style={{ fontSize: 32 * (data.subCopySizeScale ?? 1.0), fontWeight: 500, textAlign: "center" }}>{productName}</div>
+        <div style={{ fontSize: data.subCopyFontSize || 32, fontWeight: 500, textAlign: "center" }}>{productName}</div>
         {data.price && <div style={{ fontSize: 44, fontWeight: 700 }}>{data.price}</div>}
         <div
           style={{
             backgroundColor: hasBg ? "#ffffff" : "#171717",
             color: data.ctaColor || (hasBg ? "#171717" : "#ffffff"),
-            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontSize: data.ctaFontSize || ctaStyle.fontSize,
             fontWeight: 600,
             letterSpacing: "0.08em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

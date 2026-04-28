@@ -149,7 +149,7 @@ export default function PCSale({ data }: Props) {
           <h1
             style={{
               margin: 0,
-              fontSize: 80 * (data.mainCopySizeScale ?? 1.0),
+              fontSize: data.mainCopyFontSize || 80,
               fontWeight: 900,
               textAlign: "center",
               lineHeight: 1.15,
@@ -175,7 +175,7 @@ export default function PCSale({ data }: Props) {
           width: "100%",
         }}
       >
-        <div style={{ fontSize: 26 * (data.subCopySizeScale ?? 1.0), opacity: 0.9 }}>{productName}</div>
+        <div style={{ fontSize: data.subCopyFontSize || 26, opacity: 0.9 }}>{productName}</div>
         {data.price && (
           <div
             style={{
@@ -192,7 +192,7 @@ export default function PCSale({ data }: Props) {
             marginTop: 8,
             backgroundColor: "#fde047",
             color: data.ctaColor || "#b91c1c",
-            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontSize: data.ctaFontSize || ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.16em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,

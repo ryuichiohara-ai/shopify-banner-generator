@@ -95,7 +95,7 @@ export default function MobileLine({ data }: Props) {
         {data.mainCopy && (
           <div
             style={{
-              fontSize: 52 * (data.mainCopySizeScale ?? 1.0),
+              fontSize: data.mainCopyFontSize || 52,
               fontWeight: 900,
               lineHeight: 1.1,
               textShadow: "0 4px 12px rgba(0,0,0,0.25)",
@@ -125,7 +125,7 @@ export default function MobileLine({ data }: Props) {
           style={{
             backgroundColor: "#ffffff",
             color: data.ctaColor || "#06C755",
-            fontSize: ctaStyle.fontSize * (data.ctaSizeScale ?? 1.0),
+            fontSize: data.ctaFontSize || ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.12em",
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,
