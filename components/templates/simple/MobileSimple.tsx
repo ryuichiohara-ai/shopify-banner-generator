@@ -66,7 +66,7 @@ export default function MobileSimple({ data }: Props) {
         }}
       >
         {data.mainCopy && (
-          <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1.15 }}>{data.mainCopy}</div>
+          <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1.15, color: data.mainCopyColor || (hasBg ? "#ffffff" : "#171717") }}>{data.mainCopy}</div>
         )}
         <div
           style={{
@@ -92,7 +92,7 @@ export default function MobileSimple({ data }: Props) {
         <div
           style={{
             backgroundColor: hasBg ? "#ffffff" : "#171717",
-            color: hasBg ? "#171717" : "#ffffff",
+            color: data.ctaColor || (hasBg ? "#171717" : "#ffffff"),
             fontSize: ctaStyle.fontSize,
             fontWeight: 600,
             letterSpacing: "0.08em",

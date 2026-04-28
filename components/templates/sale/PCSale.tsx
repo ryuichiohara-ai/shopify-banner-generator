@@ -94,6 +94,7 @@ export default function PCSale({ data }: Props) {
                 fontSize: 26,
                 fontWeight: 500,
                 letterSpacing: "0.1em",
+                color: data.subCopyColor || "#ffffff",
               }}
             >
               {data.subCopy}
@@ -154,6 +155,7 @@ export default function PCSale({ data }: Props) {
               lineHeight: 1.15,
               letterSpacing: "0.02em",
               textShadow: "0 4px 6px rgba(0,0,0,0.3)",
+              color: data.mainCopyColor || "#ffffff",
             }}
           >
             {data.mainCopy}
@@ -189,7 +191,7 @@ export default function PCSale({ data }: Props) {
           style={{
             marginTop: 8,
             backgroundColor: "#fde047",
-            color: "#b91c1c",
+            color: data.ctaColor || "#b91c1c",
             fontSize: ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.16em",

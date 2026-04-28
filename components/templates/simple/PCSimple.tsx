@@ -48,7 +48,7 @@ export default function PCSimple({ data }: Props) {
             style={{
               fontSize: 26,
               letterSpacing: "0.08em",
-              color: hasBg ? "#f5f5f5" : "#737373",
+              color: data.subCopyColor || (hasBg ? "#f5f5f5" : "#737373"),
             }}
           >
             {data.subCopy}
@@ -63,6 +63,7 @@ export default function PCSimple({ data }: Props) {
               lineHeight: 1.15,
               letterSpacing: "0.02em",
               margin: 0,
+              color: data.mainCopyColor || (hasBg ? "#ffffff" : "#171717"),
             }}
           >
             {data.mainCopy}
@@ -113,7 +114,7 @@ export default function PCSimple({ data }: Props) {
         <div
           style={{
             backgroundColor: hasBg ? "#ffffff" : "#171717",
-            color: hasBg ? "#171717" : "#ffffff",
+            color: data.ctaColor || (hasBg ? "#171717" : "#ffffff"),
             fontSize: ctaStyle.fontSize,
             fontWeight: 600,
             letterSpacing: "0.08em",

@@ -96,7 +96,7 @@ export default function PCMember({ data }: Props) {
           ★ MEMBERS ONLY ★
         </div>
         {data.subCopy && (
-          <span style={{ fontSize: 26, letterSpacing: "0.08em", opacity: 0.95 }}>
+          <span style={{ fontSize: 26, letterSpacing: "0.08em", opacity: 0.95, color: data.subCopyColor || "#ffffff" }}>
             {data.subCopy}
           </span>
         )}
@@ -110,6 +110,7 @@ export default function PCMember({ data }: Props) {
               lineHeight: 1.15,
               letterSpacing: "0.04em",
               textShadow: "0 4px 12px rgba(0,0,0,0.3)",
+              color: data.mainCopyColor || "#ffffff",
             }}
           >
             {data.mainCopy}
@@ -161,7 +162,7 @@ export default function PCMember({ data }: Props) {
         <div
           style={{
             backgroundColor: "#fbbf24",
-            color: "#1e3a8a",
+            color: data.ctaColor || "#1e3a8a",
             fontSize: ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.16em",

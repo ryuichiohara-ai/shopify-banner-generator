@@ -22,6 +22,18 @@ export type BannerData = {
   customTextAlign: CustomTextAlign;
   /** カスタムテンプレートのフォントプリセット ID */
   customFontPreset: string;
+  /** LINE テンプレートのメインテキスト色 */
+  lineTextColor: string;
+  /** LINE テンプレートのアクセント（価格）テキスト色 */
+  lineAccentColor: string;
+  /** LINE テンプレートのバブル内アイコン色 */
+  lineIconColor: string;
+  /** メインコピーのテキスト色（空文字=テンプレートデフォルト色を使用） */
+  mainCopyColor: string;
+  /** サブコピーのテキスト色（空文字=テンプレートデフォルト色を使用） */
+  subCopyColor: string;
+  /** CTA文言のテキスト色（空文字=テンプレートデフォルト色を使用） */
+  ctaColor: string;
 };
 
 export const INITIAL_DATA: BannerData = {
@@ -37,6 +49,12 @@ export const INITIAL_DATA: BannerData = {
   showProductImage: true,
   customTextAlign: "center",
   customFontPreset: "mixed",
+  lineTextColor: "#ffffff",
+  lineAccentColor: "#fff59d",
+  lineIconColor: "#06C755",
+  mainCopyColor: "",
+  subCopyColor: "",
+  ctaColor: "",
 };
 
 export const PLACEHOLDER = {

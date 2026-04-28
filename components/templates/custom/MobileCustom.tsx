@@ -137,7 +137,7 @@ export default function MobileCustom({ data }: Props) {
               fontSize: 50,
               fontWeight: 800,
               lineHeight: 1.1,
-              color: textColor,
+              color: data.mainCopyColor || textColor,
               fontFamily: fontPreset.titleFamily,
               letterSpacing: "-0.01em",
             }}
@@ -150,7 +150,7 @@ export default function MobileCustom({ data }: Props) {
             style={{
               fontSize: 22,
               lineHeight: 1.4,
-              color: isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)",
+              color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)"),
               fontFamily: fontPreset.bodyFamily,
             }}
           >
@@ -190,7 +190,7 @@ export default function MobileCustom({ data }: Props) {
         <div
           style={{
             backgroundColor: textColor,
-            color: ctaBgColor,
+            color: data.ctaColor || ctaBgColor,
             fontSize: ctaStyle.fontSize,
             fontWeight: 700,
             letterSpacing: "0.08em",

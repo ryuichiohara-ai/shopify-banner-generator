@@ -7,6 +7,9 @@ type Props = { data: BannerData };
 export default function PCLine({ data }: Props) {
   const cta = data.cta || PLACEHOLDER.cta;
   const ctaStyle = CTA_SIZE_MAP_PC[data.ctaSize];
+  const textColor = data.lineTextColor || "#ffffff";
+  const accentColor = data.lineAccentColor || "#fff59d";
+  const iconColor = data.lineIconColor || "#06C755";
 
   return (
     <div
@@ -54,7 +57,7 @@ export default function PCLine({ data }: Props) {
           ★ 公式アカウント ★
         </div>
         {data.subCopy && (
-          <span style={{ fontSize: 26, letterSpacing: "0.08em", opacity: 0.95 }}>
+          <span style={{ fontSize: 26, letterSpacing: "0.08em", opacity: 0.95, color: data.subCopyColor || textColor }}>
             {data.subCopy}
           </span>
         )}
@@ -68,6 +71,7 @@ export default function PCLine({ data }: Props) {
               lineHeight: 1.15,
               letterSpacing: "0.04em",
               textShadow: "0 4px 12px rgba(0,0,0,0.25)",
+              color: data.mainCopyColor || textColor,
             }}
           >
             {data.mainCopy}
@@ -86,13 +90,13 @@ export default function PCLine({ data }: Props) {
           gap: 24,
         }}
       >
-        <HandshakeBubble />
+        <HandshakeBubble iconColor={iconColor} />
         {data.price && (
           <div
             style={{
               fontSize: 64,
               fontWeight: 900,
-              color: "#fff59d",
+              color: accentColor,
               textShadow: "0 4px 12px rgba(0,0,0,0.25)",
               letterSpacing: "0.04em",
             }}
@@ -101,7 +105,7 @@ export default function PCLine({ data }: Props) {
           </div>
         )}
         {data.productName && (
-          <div style={{ fontSize: 28, opacity: 0.9 }}>{data.productName}</div>
+          <div style={{ fontSize: 28, opacity: 0.9, color: textColor }}>{data.productName}</div>
         )}
       </div>
 
@@ -119,7 +123,7 @@ export default function PCLine({ data }: Props) {
         <div
           style={{
             backgroundColor: "#ffffff",
-            color: "#06C755",
+            color: data.ctaColor || "#06C755",
             fontSize: ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.16em",
@@ -138,14 +142,15 @@ export default function PCLine({ data }: Props) {
   );
 }
 
-/** 友達の握手イラストを吹き出しに入れたコンポーネント */
-function HandshakeBubble() {
+/** 友達の握手イラストを吹き出しに入れたコンポーネント（かわいいちびキャラ版） */
+function HandshakeBubble({ iconColor }: { iconColor: string }) {
+  const darkColor = "#04a043";
   return (
     <div
       style={{
         position: "relative",
         width: 360,
-        height: 280,
+        height: 290,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -175,30 +180,67 @@ function HandshakeBubble() {
           filter: "drop-shadow(0 12px 12px rgba(0,0,0,0.1))",
         }}
       />
-      {/* 握手SVGイラスト */}
+      {/* かわいい握手SVGイラスト */}
       <svg
-        width="260"
-        height="160"
-        viewBox="0 0 260 160"
+        width="280"
+        height="180"
+        viewBox="0 0 280 180"
         style={{ position: "relative", zIndex: 1 }}
       >
-        {/* 左の人：頭 */}
-        <circle cx="36" cy="26" r="24" fill="#06C755" />
-        {/* 左の人：胴体 */}
-        <rect x="24" y="56" width="24" height="60" rx="8" fill="#06C755" />
-        {/* 左の人：腕（右に伸びる） */}
-        <rect x="46" y="72" width="88" height="20" rx="10" fill="#06C755" transform="rotate(-6 46 82)" />
+        {/* ===== 左のキャラ ===== */}
+        {/* 体 */}
+        <rect x="22" y="90" width="30" height="52" rx="15" fill={iconColor} />
+        {/* 頭（大きめ・ちびキャラ） */}
+        <circle cx="37" cy="58" r="36" fill={iconColor} />
+        {/* 白目(左) */}
+        <circle cx="27" cy="52" r="9" fill="#ffffff" />
+        <circle cx="29" cy="54" r="4.5" fill="#1a1a1a" />
+        {/* 白目(右) */}
+        <circle cx="47" cy="52" r="9" fill="#ffffff" />
+        <circle cx="49" cy="54" r="4.5" fill="#1a1a1a" />
+        {/* ほっぺ */}
+        <ellipse cx="18" cy="65" rx="9" ry="5.5" fill="#ff9eb5" opacity="0.75" />
+        <ellipse cx="56" cy="65" rx="9" ry="5.5" fill="#ff9eb5" opacity="0.75" />
+        {/* 笑顔 */}
+        <path d="M28 72 Q37 81 46 72" stroke={darkColor} strokeWidth="3.5" fill="none" strokeLinecap="round" />
+        {/* 腕（右に伸びる） */}
+        <rect x="50" y="98" width="84" height="22" rx="11" fill={iconColor} transform="rotate(-6 50 109)" />
 
-        {/* 右の人：頭 */}
-        <circle cx="224" cy="26" r="24" fill="#06C755" />
-        {/* 右の人：胴体 */}
-        <rect x="212" y="56" width="24" height="60" rx="8" fill="#06C755" />
-        {/* 右の人：腕（左に伸びる） */}
-        <rect x="126" y="76" width="88" height="20" rx="10" fill="#06C755" transform="rotate(6 214 86)" />
+        {/* ===== 右のキャラ ===== */}
+        {/* 体 */}
+        <rect x="228" y="90" width="30" height="52" rx="15" fill={iconColor} />
+        {/* 頭 */}
+        <circle cx="243" cy="58" r="36" fill={iconColor} />
+        {/* 白目(左) */}
+        <circle cx="233" cy="52" r="9" fill="#ffffff" />
+        <circle cx="235" cy="54" r="4.5" fill="#1a1a1a" />
+        {/* 白目(右) */}
+        <circle cx="253" cy="52" r="9" fill="#ffffff" />
+        <circle cx="255" cy="54" r="4.5" fill="#1a1a1a" />
+        {/* ほっぺ */}
+        <ellipse cx="224" cy="65" rx="9" ry="5.5" fill="#ff9eb5" opacity="0.75" />
+        <ellipse cx="262" cy="65" rx="9" ry="5.5" fill="#ff9eb5" opacity="0.75" />
+        {/* 笑顔 */}
+        <path d="M234 72 Q243 81 252 72" stroke={darkColor} strokeWidth="3.5" fill="none" strokeLinecap="round" />
+        {/* 腕（左に伸びる） */}
+        <rect x="146" y="101" width="84" height="22" rx="11" fill={iconColor} transform="rotate(6 230 112)" />
 
-        {/* 握手部分 */}
-        <ellipse cx="130" cy="89" rx="28" ry="20" fill="#04a043" />
-        <ellipse cx="124" cy="83" rx="10" ry="6" fill="#05b34e" opacity="0.6" />
+        {/* ===== 中央：握手 + ハート ===== */}
+        {/* 握手グロー */}
+        <ellipse cx="140" cy="113" rx="32" ry="22" fill={darkColor} opacity="0.35" />
+        {/* ハート */}
+        <path
+          d="M140 106 C140 95, 125 89, 125 101 C125 110, 140 122, 140 122 C140 122, 155 110, 155 101 C155 89, 140 95, 140 106 Z"
+          fill="#ff6b9d"
+        />
+
+        {/* ===== キラキラ装飾 ===== */}
+        {/* 左上スター */}
+        <path d="M84,22 L86,29 L93,29 L88,33 L90,40 L84,36 L78,40 L80,33 L75,29 L82,29 Z" fill="#fff59d" />
+        {/* 右上スター（小） */}
+        <path d="M196,16 L198,21 L203,21 L199,24 L201,29 L196,26 L191,29 L193,24 L189,21 L194,21 Z" fill="#fff59d" />
+        {/* 右スター（極小） */}
+        <path d="M218,46 L219.5,50 L224,50 L220.5,52.5 L222,57 L218,54 L214,57 L215.5,52.5 L212,50 L216.5,50 Z" fill="#ffffff" opacity="0.85" />
       </svg>
     </div>
   );

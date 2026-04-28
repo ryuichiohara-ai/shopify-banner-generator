@@ -103,6 +103,7 @@ export default function MobileSale({ data }: Props) {
               fontWeight: 900,
               lineHeight: 1.1,
               textShadow: "0 4px 6px rgba(0,0,0,0.3)",
+              color: data.mainCopyColor || "#ffffff",
             }}
           >
             {data.mainCopy}
@@ -125,7 +126,7 @@ export default function MobileSale({ data }: Props) {
         <div
           style={{
             backgroundColor: "#fde047",
-            color: "#b91c1c",
+            color: data.ctaColor || "#b91c1c",
             fontSize: ctaStyle.fontSize,
             fontWeight: 900,
             letterSpacing: "0.12em",
