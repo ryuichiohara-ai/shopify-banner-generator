@@ -33,9 +33,13 @@ export default function MobileCustom({ data }: Props) {
       : bgPreset.background
     : "#ffffff";
 
-  // テキストブロックの絶対位置
-  const textX = data.customTextX ?? 4;
-  const textY = data.customTextY ?? 50;
+  // 各要素の位置
+  const mainX = data.customMainX ?? 8;
+  const mainY = data.customMainY ?? 32;
+  const subX = data.customSubX ?? 8;
+  const subY = data.customSubY ?? 55;
+  const ctaX = data.customCtaX ?? 8;
+  const ctaY = data.customCtaY ?? 72;
 
   return (
     <div
@@ -43,10 +47,6 @@ export default function MobileCustom({ data }: Props) {
         width: 1280,
         height: 320,
         position: "relative",
-        display: "flex",
-        alignItems: "center",
-        gap: 40,
-        padding: "0 56px",
         background: bgPreset.background,
         fontFamily: fontPreset.bodyFamily,
         overflow: "hidden",
@@ -83,7 +83,7 @@ export default function MobileCustom({ data }: Props) {
         </>
       )}
 
-      {/* 商品画像（あれば左端に固定） */}
+      {/* 商品画像 */}
       {showImg && (
         <div
           style={{
@@ -94,7 +94,6 @@ export default function MobileCustom({ data }: Props) {
             zIndex: 5,
             width: 220,
             height: 220,
-            flexShrink: 0,
             borderRadius: 16,
             overflow: "hidden",
             boxShadow: "0 12px 32px rgba(0,0,0,0.2)",
@@ -111,19 +110,20 @@ export default function MobileCustom({ data }: Props) {
         </div>
       )}
 
-      {/* テキストブロック（絶対配置でドラッグ可能） */}
+      {/* ① メインコピー（productName・price・mainCopy をまとめて移動） */}
       <div
+        data-drag="main"
         style={{
           position: "absolute",
-          left: `${textX}%`,
-          top: `${textY}%`,
+          left: `${mainX}%`,
+          top: `${mainY}%`,
           transform: "translateY(-50%)",
           zIndex: 10,
           display: "flex",
           flexDirection: "column",
           alignItems,
           textAlign,
-          gap: 8,
+          gap: 6,
           maxWidth: "60%",
         }}
       >
@@ -139,32 +139,6 @@ export default function MobileCustom({ data }: Props) {
             }}
           >
             {data.productName}
-          </div>
-        )}
-        {data.mainCopy && (
-          <div
-            style={{
-              fontSize: data.mainCopyFontSize || 50,
-              fontWeight: 800,
-              lineHeight: 1.1,
-              color: data.mainCopyColor || textColor,
-              fontFamily: fontPreset.titleFamily,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            {data.mainCopy}
-          </div>
-        )}
-        {data.subCopy && (
-          <div
-            style={{
-              fontSize: data.subCopyFontSize || 22,
-              lineHeight: 1.4,
-              color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)"),
-              fontFamily: fontPreset.bodyFamily,
-            }}
-          >
-            {data.subCopy}
           </div>
         )}
         {data.price && (
@@ -184,19 +158,61 @@ export default function MobileCustom({ data }: Props) {
             {data.price}
           </div>
         )}
+        {data.mainCopy && (
+          <div
+            style={{
+              fontSize: data.mainCopyFontSize || 50,
+              fontWeight: 800,
+              lineHeight: 1.1,
+              color: data.mainCopyColor || textColor,
+              fontFamily: fontPreset.titleFamily,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {data.mainCopy}
+          </div>
+        )}
       </div>
 
-      {/* 右：CTAボタン（右端に固定） */}
+      {/* ② サブコピー（独立して移動） */}
+      {data.subCopy && (
+        <div
+          data-drag="sub"
+          style={{
+            position: "absolute",
+            left: `${subX}%`,
+            top: `${subY}%`,
+            transform: "translateY(-50%)",
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "column",
+            alignItems,
+            textAlign,
+            maxWidth: "60%",
+          }}
+        >
+          <div
+            style={{
+              fontSize: data.subCopyFontSize || 22,
+              lineHeight: 1.4,
+              color: data.subCopyColor || (isDark ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.6)"),
+              fontFamily: fontPreset.bodyFamily,
+            }}
+          >
+            {data.subCopy}
+          </div>
+        </div>
+      )}
+
+      {/* ③ CTAボタン（独立して移動） */}
       <div
+        data-drag="cta"
         style={{
           position: "absolute",
-          right: 56,
-          top: "50%",
+          left: `${ctaX}%`,
+          top: `${ctaY}%`,
           transform: "translateY(-50%)",
           zIndex: 10,
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
         }}
       >
         <div

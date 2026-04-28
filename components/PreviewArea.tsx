@@ -6,6 +6,8 @@ import { MOBILE_SIZE, PC_SIZE } from "@/lib/types";
 import PCBanner from "./PCBanner";
 import MobileBanner from "./MobileBanner";
 
+type DragTarget = "main" | "sub" | "cta";
+
 type Props = {
   data: BannerData;
   template: TemplateId;
@@ -30,8 +32,45 @@ const MOBILE_PREVIEW_SCALE = 0.4; // 1280 → 512 px / 320 → 128 px
  */
 export default function PreviewArea({ data, template, pcRef, mobileRef, update }: Props) {
   const [isDragging, setIsDragging] = useState(false);
+  const [dragTarget, setDragTarget] = useState<DragTarget>("main");
   const pcPreviewRef = useRef<HTMLDivElement>(null);
   const mobilePreviewRef = useRef<HTMLDivElement>(null);
+
+  /** ドラッグ中の座標をBannerDataに反映する */
+  function applyDrag(
+    e: React.MouseEvent<HTMLDivElement>,
+    containerRef: React.RefObject<HTMLDivElement | null>,
+    scale: number,
+    canvasW: number,
+    canvasH: number,
+  ) {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const rawX = (e.clientX - rect.left) / scale;
+    const rawY = (e.clientY - rect.top) / scale;
+    const pctX = Math.round(Math.max(0, Math.min(90, (rawX / canvasW) * 100)) * 10) / 10;
+    const pctY = Math.round(Math.max(2, Math.min(95, (rawY / canvasH) * 100)) * 10) / 10;
+
+    if (dragTarget === "main") {
+      update("customMainX", pctX);
+      update("customMainY", pctY);
+    } else if (dragTarget === "sub") {
+      update("customSubX", pctX);
+      update("customSubY", pctY);
+    } else {
+      update("customCtaX", pctX);
+      update("customCtaY", pctY);
+    }
+  }
+
+  const isCustom = template === "custom";
+
+  // ドラッグターゲット選択ボタンのラベル
+  const dragTargetButtons: { id: DragTarget; label: string }[] = [
+    { id: "main", label: "メインコピー" },
+    { id: "sub", label: "サブコピー" },
+    { id: "cta", label: "CTA" },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
@@ -49,6 +88,30 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
         <MobileBanner ref={mobileRef} data={data} template={template} />
       </div>
 
+      {/* カスタムテンプレート：ドラッグ対象選択ボタン */}
+      {isCustom && (
+        <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2.5">
+          <span className="text-xs font-medium text-neutral-500 shrink-0">移動する要素：</span>
+          <div className="flex gap-1.5">
+            {dragTargetButtons.map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setDragTarget(id)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  dragTarget === id
+                    ? "bg-neutral-800 text-white"
+                    : "bg-white text-neutral-600 border border-neutral-300 hover:bg-neutral-100"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <span className="ml-2 text-xs text-neutral-400">← プレビューをドラッグして位置調整</span>
+        </div>
+      )}
+
       {/* 表示用：縮小プレビュー（refs は不要） */}
       <section className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
         <header className="mb-3 flex items-baseline justify-between">
@@ -57,35 +120,24 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
             実寸 {PC_SIZE.width}×{PC_SIZE.height} px / 表示は {Math.round(PC_PREVIEW_SCALE * 100)}%
           </span>
         </header>
-        {template === "custom" && (
-          <p className="mb-2 text-xs text-neutral-400">プレビュー上でテキストブロックをドラッグして位置を変更できます</p>
-        )}
         <ScaledFrame
           width={PC_SIZE.width}
           height={PC_SIZE.height}
           scale={PC_PREVIEW_SCALE}
           containerRef={pcPreviewRef}
           onMouseDown={(e) => {
-            if (template !== "custom") return;
+            if (!isCustom) return;
             e.preventDefault();
             setIsDragging(true);
+            applyDrag(e, pcPreviewRef, PC_PREVIEW_SCALE, PC_SIZE.width, PC_SIZE.height);
           }}
           onMouseMove={(e) => {
-            if (!isDragging || template !== "custom") return;
-            const rect = pcPreviewRef.current!.getBoundingClientRect();
-            const PC_SCALE = 0.4;
-            const PC_CANVAS_W = 1080;
-            const PC_CANVAS_H = 1080;
-            const rawX = (e.clientX - rect.left) / PC_SCALE;
-            const rawY = (e.clientY - rect.top) / PC_SCALE;
-            const pctX = Math.max(0, Math.min(85, (rawX / PC_CANVAS_W) * 100));
-            const pctY = Math.max(5, Math.min(90, (rawY / PC_CANVAS_H) * 100));
-            update("customTextX", Math.round(pctX * 10) / 10);
-            update("customTextY", Math.round(pctY * 10) / 10);
+            if (!isDragging || !isCustom) return;
+            applyDrag(e, pcPreviewRef, PC_PREVIEW_SCALE, PC_SIZE.width, PC_SIZE.height);
           }}
           onMouseUp={() => setIsDragging(false)}
           onMouseLeave={() => setIsDragging(false)}
-          cursor={template === "custom" ? (isDragging ? "grabbing" : "grab") : "default"}
+          cursor={isCustom ? (isDragging ? "grabbing" : "crosshair") : "default"}
         >
           <PCBanner data={data} template={template} />
         </ScaledFrame>
@@ -99,35 +151,24 @@ export default function PreviewArea({ data, template, pcRef, mobileRef, update }
             {Math.round(MOBILE_PREVIEW_SCALE * 100)}%
           </span>
         </header>
-        {template === "custom" && (
-          <p className="mb-2 text-xs text-neutral-400">プレビュー上でテキストブロックをドラッグして位置を変更できます</p>
-        )}
         <ScaledFrame
           width={MOBILE_SIZE.width}
           height={MOBILE_SIZE.height}
           scale={MOBILE_PREVIEW_SCALE}
           containerRef={mobilePreviewRef}
           onMouseDown={(e) => {
-            if (template !== "custom") return;
+            if (!isCustom) return;
             e.preventDefault();
             setIsDragging(true);
+            applyDrag(e, mobilePreviewRef, MOBILE_PREVIEW_SCALE, MOBILE_SIZE.width, MOBILE_SIZE.height);
           }}
           onMouseMove={(e) => {
-            if (!isDragging || template !== "custom") return;
-            const rect = mobilePreviewRef.current!.getBoundingClientRect();
-            const MOBILE_SCALE = 0.4;
-            const MOBILE_CANVAS_W = 1280;
-            const MOBILE_CANVAS_H = 320;
-            const rawX = (e.clientX - rect.left) / MOBILE_SCALE;
-            const rawY = (e.clientY - rect.top) / MOBILE_SCALE;
-            const pctX = Math.max(0, Math.min(85, (rawX / MOBILE_CANVAS_W) * 100));
-            const pctY = Math.max(5, Math.min(90, (rawY / MOBILE_CANVAS_H) * 100));
-            update("customTextX", Math.round(pctX * 10) / 10);
-            update("customTextY", Math.round(pctY * 10) / 10);
+            if (!isDragging || !isCustom) return;
+            applyDrag(e, mobilePreviewRef, MOBILE_PREVIEW_SCALE, MOBILE_SIZE.width, MOBILE_SIZE.height);
           }}
           onMouseUp={() => setIsDragging(false)}
           onMouseLeave={() => setIsDragging(false)}
-          cursor={template === "custom" ? (isDragging ? "grabbing" : "grab") : "default"}
+          cursor={isCustom ? (isDragging ? "grabbing" : "crosshair") : "default"}
         >
           <MobileBanner data={data} template={template} />
         </ScaledFrame>

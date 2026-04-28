@@ -27,7 +27,7 @@ export default function PCCustom({ data }: Props) {
     CUSTOM_FONT_PRESETS.find((p) => p.id === data.customFontPreset) ??
     CUSTOM_FONT_PRESETS.find((p) => p.id === "mixed")!;
 
-  // テキスト揃えに対応した CSS 値
+  // テキスト揃え
   const alignItems =
     textAlign === "left" ? "flex-start" : textAlign === "right" ? "flex-end" : "center";
   const ctaBgColor = isDark
@@ -36,21 +36,13 @@ export default function PCCustom({ data }: Props) {
       : bgPreset.background
     : "#ffffff";
 
-  // バッジ・ガラス調スタイル
-  const badgeStyle = {
-    backgroundColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)",
-    color: textColor,
-    border: `1px solid ${isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.15)"}`,
-    fontSize: 26,
-    fontWeight: 700,
-    letterSpacing: "0.1em",
-    padding: "8px 28px",
-    borderRadius: 9999,
-  } as const;
-
-  // テキストブロックの絶対位置
-  const textX = data.customTextX ?? 4;
-  const textY = data.customTextY ?? 50;
+  // 各要素の位置
+  const mainX = data.customMainX ?? 8;
+  const mainY = data.customMainY ?? 32;
+  const subX = data.customSubX ?? 8;
+  const subY = data.customSubY ?? 55;
+  const ctaX = data.customCtaX ?? 8;
+  const ctaY = data.customCtaY ?? 72;
 
   return (
     <div
@@ -58,10 +50,6 @@ export default function PCCustom({ data }: Props) {
         width: 1080,
         height: 1080,
         position: "relative",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "80px",
         background: bgPreset.background,
         fontFamily: fontPreset.bodyFamily,
         overflow: "hidden",
@@ -98,23 +86,50 @@ export default function PCCustom({ data }: Props) {
         </>
       )}
 
-      {/* テキストブロック（絶対配置でドラッグ可能） */}
+      {/* 商品画像 */}
+      {showImg && (
+        <div
+          style={{
+            position: "absolute",
+            right: 80,
+            top: "50%",
+            transform: "translateY(-50%)",
+            zIndex: 5,
+            width: 380,
+            height: 380,
+            borderRadius: 24,
+            overflow: "hidden",
+            boxShadow: "0 24px 48px rgba(0,0,0,0.2)",
+            border: isDark ? "3px solid rgba(255,255,255,0.15)" : "3px solid rgba(0,0,0,0.08)",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={data.imageUrl}
+            alt={data.productName || ""}
+            crossOrigin="anonymous"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+      )}
+
+      {/* ① メインコピー（productName・price・mainCopy をまとめて移動） */}
       <div
+        data-drag="main"
         style={{
           position: "absolute",
-          left: `${textX}%`,
-          top: `${textY}%`,
+          left: `${mainX}%`,
+          top: `${mainY}%`,
           transform: "translateY(-50%)",
           zIndex: 10,
           display: "flex",
           flexDirection: "column",
           alignItems,
           textAlign,
-          gap: 12,
-          maxWidth: "70%",
+          gap: 10,
+          maxWidth: "75%",
         }}
       >
-        {data.price && <div style={badgeStyle}>{data.price}</div>}
         {data.productName && (
           <div
             style={{
@@ -127,6 +142,23 @@ export default function PCCustom({ data }: Props) {
             }}
           >
             {data.productName}
+          </div>
+        )}
+        {data.price && (
+          <div
+            style={{
+              alignSelf: alignItems,
+              backgroundColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)",
+              color: textColor,
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.15)"}`,
+              fontSize: 26,
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              padding: "8px 28px",
+              borderRadius: 9999,
+            }}
+          >
+            {data.price}
           </div>
         )}
         {data.mainCopy && (
@@ -143,7 +175,25 @@ export default function PCCustom({ data }: Props) {
             {data.mainCopy}
           </div>
         )}
-        {data.subCopy && (
+      </div>
+
+      {/* ② サブコピー（独立して移動） */}
+      {data.subCopy && (
+        <div
+          data-drag="sub"
+          style={{
+            position: "absolute",
+            left: `${subX}%`,
+            top: `${subY}%`,
+            transform: "translateY(-50%)",
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "column",
+            alignItems,
+            textAlign,
+            maxWidth: "75%",
+          }}
+        >
           <div
             style={{
               fontSize: data.subCopyFontSize || 32,
@@ -154,11 +204,22 @@ export default function PCCustom({ data }: Props) {
           >
             {data.subCopy}
           </div>
-        )}
+        </div>
+      )}
+
+      {/* ③ CTAボタン（独立して移動） */}
+      <div
+        data-drag="cta"
+        style={{
+          position: "absolute",
+          left: `${ctaX}%`,
+          top: `${ctaY}%`,
+          transform: "translateY(-50%)",
+          zIndex: 10,
+        }}
+      >
         <div
           style={{
-            marginTop: 12,
-            alignSelf: alignItems,
             backgroundColor: textColor,
             color: data.ctaColor || ctaBgColor,
             fontSize: data.ctaFontSize || ctaStyle.fontSize,
@@ -167,39 +228,12 @@ export default function PCCustom({ data }: Props) {
             padding: `${ctaStyle.paddingY}px ${ctaStyle.paddingX}px`,
             borderRadius: 9999,
             boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+            whiteSpace: "nowrap" as const,
           }}
         >
           {cta}
         </div>
       </div>
-
-      {/* 商品画像（あれば右端に固定） */}
-      {showImg && (
-        <div
-          style={{
-            position: "absolute",
-            right: 80,
-            top: "50%",
-            transform: "translateY(-50%)",
-            zIndex: 5,
-            width: 380,
-            height: 380,
-            flexShrink: 0,
-            borderRadius: 24,
-            overflow: "hidden",
-            boxShadow: "0 24px 48px rgba(0,0,0,0.2)",
-            border: isDark ? "3px solid rgba(255,255,255,0.15)" : "3px solid rgba(0,0,0,0.08)",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={data.imageUrl}
-            alt={data.productName || ""}
-            crossOrigin="anonymous"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </div>
-      )}
     </div>
   );
 }

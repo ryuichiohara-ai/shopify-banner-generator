@@ -40,10 +40,18 @@ export type BannerData = {
   subCopyFontSize: number;
   /** CTA文言のフォントサイズ（px）。0 = テンプレートデフォルト */
   ctaFontSize: number;
-  /** カスタムテンプレートのテキストブロック X 位置（%単位）*/
-  customTextX: number;
-  /** カスタムテンプレートのテキストブロック Y 位置（%単位）*/
-  customTextY: number;
+  /** カスタムテンプレート：メインコピー X 位置（%単位）*/
+  customMainX: number;
+  /** カスタムテンプレート：メインコピー Y 位置（%単位）*/
+  customMainY: number;
+  /** カスタムテンプレート：サブコピー X 位置（%単位）*/
+  customSubX: number;
+  /** カスタムテンプレート：サブコピー Y 位置（%単位）*/
+  customSubY: number;
+  /** カスタムテンプレート：CTA X 位置（%単位）*/
+  customCtaX: number;
+  /** カスタムテンプレート：CTA Y 位置（%単位）*/
+  customCtaY: number;
   /** LINE テンプレートのブランドロゴ URL（空文字=HandshakeBubble SVG を表示）*/
   lineBrandLogoUrl: string;
 };
@@ -70,8 +78,12 @@ export const INITIAL_DATA: BannerData = {
   mainCopyFontSize: 0,
   subCopyFontSize: 0,
   ctaFontSize: 0,
-  customTextX: 4,
-  customTextY: 50,
+  customMainX: 8,
+  customMainY: 32,
+  customSubX: 8,
+  customSubY: 55,
+  customCtaX: 8,
+  customCtaY: 72,
   lineBrandLogoUrl: "",
 };
 
